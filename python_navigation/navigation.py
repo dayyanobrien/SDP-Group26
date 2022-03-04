@@ -63,8 +63,17 @@ class Navigation():
 ####################################################################################################################################
 
 def defineHome():
-	home = input("Enter x and y value of coordinate of home with a space inbetween.: ")
-	home = [float(i) for i in home.split(" ")]
+	validInput = False
+	while (not validInput):
+		try:
+			home = input("Enter x and y value of coordinate of home with a space inbetween: ")
+			home = [float(i) for i in home.split(" ")]
+			validInput = len(home)==2
+		except ValueError:
+			validInput=False
+			print("Invalid input")
+
+	home = [float(i) for i in home]
 
 	homeFile = open("home.txt","r+")
 	if (os.path.getsize("home.txt")!=0):
@@ -77,11 +86,29 @@ def defineHome():
 	return home
 
 def addTables(tableList):
+
+	validInput = False
+	while (not validInput):
+		try:
+			number = int(input("How many tables would you like to add: "))
+			validInput = True
+		except ValueError:
+			validInput = False
+			print("Invalid input")
+
 	tablesFile = open("tables.txt","a")
-	number = int(input("How many tables would you like to add: "))
 	for x in range(0,number):
-		newTable = input("Enter x and y value of coordinate of next table with a space inbetween.: ")
-		newTable = [float(i) for i in newTable.split(" ")]
+
+		validInput = False
+		while (not validInput):
+			try:
+				newTable = input("Enter x and y value of coordinate of next table with a space inbetween: ")
+				newTable = [float(i) for i in newTable.split(" ")]
+				validInput = len(home)==2
+			except ValueError:
+				validInput=False
+				print("Invalid input")
+
 		tableList.append(newTable)
 		tablesFile.write(str(newTable[0]) +" "+ str(newTable[1]) +"\n")
 		print("Table has been saved and assigned table number "+str(len(tableList)))
@@ -90,10 +117,21 @@ def addTables(tableList):
 	return tableList
 
 def deliverTo():
-	deliverTo = input("Enter what table to deliver to: ")
-	deliverTo = int(deliverTo)-1
+	validInput = False
+	while (not validInput):
+		try:
+			deliverTo = input("Enter what table to deliver to: ")
+			deliverTo = int(deliverTo)
+			if ((deliverTo<1) and (deliverTo>len(tableList))):
+				validInput=False
+				print("invalid input")
+			else:
+				validInput=True
+		except ValueError:
+			validInput=False
+			print("invalid input")
 
-	travelTo(tableList[deliverTo])
+	travelTo(tableList[deliverTo-1])
 
 	"""
 	rospy.init_node('nav_test', anonymous=False)
@@ -222,7 +260,10 @@ if __name__ == '__main__':
 				deliverTo()
 
 			elif (nextCommand == "RETURNHOME"):
-				travelTo(home)
+				if (not(home==[])):
+					travelTo(home)
+				else:
+					print("Must define home first")
 
 			elif (nextCommand == "EXIT"):
 				dontexit=False
