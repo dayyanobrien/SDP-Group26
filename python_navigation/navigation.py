@@ -4,7 +4,11 @@
 
 import rospy
 import os
+import tf
 import sys
+import rospy
+#from std_msgs import Float64
+#from std_msgs import range
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 import actionlib
 from actionlib_msgs.msg import *
@@ -43,7 +47,7 @@ class Navigation():
 		result = False
 
 		if success and state == GoalStatus.SUCCEEDED:
-		# We made it!
+			# We made it!
 			result = True
 		else:
 			self.move_base.cancel_goal()
@@ -63,17 +67,8 @@ class Navigation():
 ####################################################################################################################################
 
 def defineHome():
-	validInput = False
-	while (not validInput):
-		try:
-			home = input("Enter x and y value of coordinate of home with a space inbetween: ")
-			home = [float(i) for i in home.split(" ")]
-			validInput = len(home)==2
-		except ValueError:
-			validInput=False
-			print("Invalid input")
-
-	home = [float(i) for i in home]
+	home = input("Enter x and y value of coordinate of home with a space inbetween.: ")
+	home = [float(i) for i in home.split(" ")]
 
 	homeFile = open("home.txt","r+")
 	if (os.path.getsize("home.txt")!=0):
@@ -86,52 +81,35 @@ def defineHome():
 	return home
 
 def addTables(tableList):
-
-	validInput = False
-	while (not validInput):
-		try:
-			number = int(input("How many tables would you like to add: "))
-			validInput = True
-		except ValueError:
-			validInput = False
-			print("Invalid input")
-
 	tablesFile = open("tables.txt","a")
+	number = int(input("How many tables would you like to add: "))
 	for x in range(0,number):
-
-		validInput = False
-		while (not validInput):
-			try:
-				newTable = input("Enter x and y value of coordinate of next table with a space inbetween: ")
-				newTable = [float(i) for i in newTable.split(" ")]
-				validInput = len(home)==2
-			except ValueError:
-				validInput=False
-				print("Invalid input")
-
+		newTable = input("Enter x and y value of coordinate of next table with a space inbetween.: ")
+		newTable = [float(i) for i in newTable.split(" ")]
 		tableList.append(newTable)
-		tablesFile.write(str(newTable[0]) +" "+ str(newTable[1]) +"\n")
-		print("Table has been saved and assigned table number "+str(len(tableList)))
+		direction = input("Enter direction of turtlebot. U(up)/D(down)/L(left)/R(right): ")
+		if direction == 'U':
+			newTable.append(0.0)
+		elif direction == 'D':
+			newTable.append(3.1)
+		elif direction == 'L':
+			newTable.append(1.65)
+		elif direction == 'R':
+			newTable.append(-1.65)
 
+		tablesFile.write(str(newTable[0]) +" "+ str(newTable[1]) + " " + str(newTable[2]) + "\n")
+		#tablesFile.write(str(newTable[0]) + " " + str(newTable[1]) +"\n")
+		print("Table has been saved and assigned table number "+str(len(tableList)))
 	tablesFile.close()
 	return tableList
 
 def deliverTo():
-	validInput = False
-	while (not validInput):
-		try:
-			deliverTo = input("Enter what table to deliver to: ")
-			deliverTo = int(deliverTo)
-			if ((deliverTo<1) and (deliverTo>len(tableList))):
-				validInput=False
-				print("invalid input")
-			else:
-				validInput=True
-		except ValueError:
-			validInput=False
-			print("invalid input")
-
-	travelTo(tableList[deliverTo-1])
+	deliverTo = input("Enter what table to deliver to: ")
+	deliverTo = int(deliverTo)-1
+	
+	travelTo(tableList[deliverTo])
+	input("Press enter to return")
+	travelTo(home)
 
 	"""
 	rospy.init_node('nav_test', anonymous=False)
@@ -176,10 +154,14 @@ def returnHome():
 def travelTo(location):
 	rospy.init_node('nav_test', anonymous=False)
 	navigator = Navigation()
-
+	print(location)
 	# Customize the following values so they are appropriate for your location
 	position = {'x': location[0], 'y' : location[1]}
-	quaternion = {'r1' : 0.000, 'r2' : 0.000, 'r3' : 0.000, 'r4' : 1.000}
+	#quaternion = {'r1' : location[2], 'r2' : location[3], 'r3' : location[4], 'r4' : location[5]}
+	#quaternion = {'r1' : 0.7, 'r2' : 0, 'r3' : 0, 'r4' : -0.7}
+	#L: 1.65   R: -1.65   Up: 0.0    down: 3.1
+	quat = tf.transformations.quaternion_from_euler(0, 0, location[2])
+	quaternion = {'r1' : quat[0], 'r2' : quat[1], 'r3' : quat[2], 'r4' : quat[3]}
 
 	rospy.loginfo("Go to (%s, %s) pose", position['x'], position['y'])
 	success = navigator.goto(position, quaternion)
@@ -207,6 +189,19 @@ def moveTable(tableList):
 	tablesFile.close()
 	print("Table "+ str(tableNumber)+" has been moved")
 	return tableList
+
+def callback1(data):
+    rospy.loginfo("Callback1 heard %s",data.data)
+
+def callback2(data):
+    rospy.loginfo("Callback2 heard %s",data.data) 
+
+def listener():
+    rospy.init_node('python_navi')
+    rospy.Subscriber("ultrasonic", Float64, callback1)
+    rospy.Subscriber("chatter2", String, callback2)
+    # spin() simply keeps python from exiting until this node is stopped
+    rospy.spin()
 
 ####################################################################################################################################
 ####################################################################################################################################
@@ -239,34 +234,32 @@ if __name__ == '__main__':
 	while (dontexit):
 		try:
 			print()
-			print("Enter DEFINEHOME to define home location")
-			print("Enter ADDTABLE to add new table")
-			print("Enter DELIVERTO to deliver to a table")
-			print("Enter RETURNHOME to return robot home")
-			print("Enter MOVETABLE to change table location")
-			print("Enter EXIT to exit")
+			print("Enter [1] DEFINEHOME to define home location")
+			print("Enter [2] ADDTABLE to add new table")
+			print("Enter [3] DELIVERTO to deliver to a table")
+			print("Enter [4] RETURNHOME to return robot home")
+			print("Enter [5] MOVETABLE to change table location")
+			print("Enter [6] EXIT to exit")
 			nextCommand = input()
 
-			if (nextCommand == "DEFINEHOME"):
+			if (nextCommand == "1"):
 				home = defineHome()
 
-			elif (nextCommand == "ADDTABLE"):
+			elif (nextCommand == "2"):
 				tableList = addTables(tableList)
 
-			elif (nextCommand == "MOVETABLE"):
-				moveTable(tableList)
-
-			elif (nextCommand == "DELIVERTO"):
+			elif (nextCommand == "3"):
 				deliverTo()
 
-			elif (nextCommand == "RETURNHOME"):
-				if (not(home==[])):
-					travelTo(home)
-				else:
-					print("Must define home first")
+			elif (nextCommand == "4"):
+				travelTo(home)
 
-			elif (nextCommand == "EXIT"):
+			elif (nextCommand == "5"):
+				moveTable(tableList)
+
+			elif (nextCommand == "6"):
 				dontexit=False
 
 		except rospy.ROSInterruptException:
 			rospy.loginfo("Ctrl-C caught. Quitting")
+
