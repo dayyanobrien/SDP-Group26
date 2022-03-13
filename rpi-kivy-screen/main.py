@@ -13,7 +13,10 @@ from kivy.graphics import Color, Rectangle
 import RPi.GPIO as GPIO
 
 import rospy
+import std_msgs
 rospy.init_node('main')
+pub = rospy.Publisher('table_state', int, queue_size = 10)
+
 
 
 
@@ -39,7 +42,9 @@ GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 # Define some helper functions:
 
-# This callback will be bound to the LED toggle and Beep button:
+# This callback will be bound TO CONFIRM AND TABLE BUTTON:
+#TO DO: PUBLISH TABLE NUMBER
+
 def press_callback(obj):
 	print("Button pressed,", obj.text)
 	if obj.text == 'Received':
@@ -56,6 +61,7 @@ def press_callback(obj):
 			GPIO.output(confirmPin, GPIO.LOW)
 
     if GPIO.input(tablePin) and GPIO.input(confirmPin):
+        pub.publish(TABLE_NUMBER))
 
 
 
