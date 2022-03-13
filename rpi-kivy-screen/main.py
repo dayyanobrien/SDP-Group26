@@ -12,21 +12,27 @@ from kivy.graphics import Color, Rectangle
 
 import RPi.GPIO as GPIO
 
+import rospy
+rospy.init_node('main')
+
+
+
 #for now, use a global for blink speed (better implementation TBD):
 speed = 1.0
 
 # Set up GPIO:
-beepPin = 18 #PIN for read table
-recievePin = 25
- 
-ledPin = 27
+tablePin = 18 #PIN for read table
+orderRecievePin = 25 
+confirmPin = 27
+
+
 buttonPin = 22
 flashLedPin = 10
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(beepPin, GPIO.OUT)
-GPIO.output(beepPin, GPIO.LOW)
-GPIO.setup(ledPin, GPIO.OUT)
-GPIO.output(ledPin, GPIO.LOW)
+GPIO.setup(tablePin, GPIO.OUT)
+GPIO.output(tablePin, GPIO.LOW)
+GPIO.setup(confirmPin, GPIO.OUT)
+GPIO.output(confirmPin, GPIO.LOW)
 GPIO.setup(flashLedPin, GPIO.OUT)
 GPIO.output(flashLedPin, GPIO.LOW)
 GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -38,19 +44,24 @@ def press_callback(obj):
 	print("Button pressed,", obj.text)
 	if obj.text == 'Received':
 		# turn on the beeper:
-		GPIO.output(beepPin, GPIO.HIGH)
+		GPIO.output(tablePin, GPIO.HIGH)
 		# schedule it to turn off:
 		Clock.schedule_once(buzzer_off, .1)
 	if obj.text == 'Confirm table':
 		if obj.state == "down":
 			print ("button on")
-			GPIO.output(ledPin, GPIO.HIGH)
+			GPIO.output(confirmPin, GPIO.HIGH)
 		else:
 			print ("button off")
-			GPIO.output(ledPin, GPIO.LOW)
+			GPIO.output(confirmPin, GPIO.LOW)
+
+    if GPIO.input(tablePin) and GPIO.input(confirmPin):
+
+
+
 
 def buzzer_off(dt):
-	GPIO.output(beepPin, GPIO.LOW)
+	GPIO.output(tablePin, GPIO.LOW)
 
 # Toggle the flashing LED according to the speed global
 # This will need better implementation
