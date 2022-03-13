@@ -1,0 +1,6 @@
+GPIO Pin Configuration:
+
+Ultrasonic trigger = 23
+Ultrasonic echo = 24
+Touchscreen table number = 18
+Touchscreen received = 25
