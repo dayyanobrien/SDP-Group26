@@ -48,20 +48,55 @@ GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 def press_callback(obj):
 	print("Button pressed,", obj.text)
 	if obj.text == 'Received':
-		# turn on the beeper:
-		GPIO.output(tablePin, GPIO.HIGH)
-		# schedule it to turn off:
-		Clock.schedule_once(buzzer_off, .1)
-	if obj.text == 'Confirm table':
+		pub.publish('Recieved')
+	if obj.text == 'Table 1':
 		if obj.state == "down":
-			print ("button on")
-			GPIO.output(confirmPin, GPIO.HIGH)
+			if TABLE_NUMBER == 0:
+				TABLE_NUMBER = 1
 		else:
-			print ("button off")
-			GPIO.output(confirmPin, GPIO.LOW)
-
-    if GPIO.input(tablePin) and GPIO.input(confirmPin):
-        pub.publish(TABLE_NUMBER))
+			TABLE_NUMBER = 0
+	if obj.text == 'Table 2':
+		if obj.state == "down":
+			if TABLE_NUMBER == 0:
+				TABLE_NUMBER = 2
+		else:
+			TABLE_NUMBER = 0
+	if obj.text == 'Table 3':
+		if obj.state == "down":
+			if TABLE_NUMBER == 0:
+				TABLE_NUMBER = 3
+		else:
+			TABLE_NUMBER = 0
+	if obj.text == 'Table 4':
+		if obj.state == "down":
+			if TABLE_NUMBER == 0:
+				TABLE_NUMBER = 4
+		else:
+			TABLE_NUMBER = 0
+	if obj.text == 'Table 5':
+		if obj.state == "down":
+			if TABLE_NUMBER == 0:
+				TABLE_NUMBER = 5
+		else:
+			TABLE_NUMBER = 0
+	if obj.text == 'Table 6':
+		if obj.state == "down":
+			if TABLE_NUMBER == 0:
+				TABLE_NUMBER = 6
+		else:
+			TABLE_NUMBER = 0
+	if obj.text == 'Table 7':
+		if obj.state == "down":
+			if TABLE_NUMBER == 0:
+				TABLE_NUMBER = 7
+		else:
+			TABLE_NUMBER = 0
+			
+	if obj.text == 'Confirm table':
+		if TABLE_NUMBER != 0:
+			pub.publish(TABLE_NUMBER)
+		else:
+			print("No table selected, or multiple buttons. Retry")
 
 
 
@@ -106,7 +141,7 @@ class MyApp(App):
 		table1Control = ToggleButton(text="Table 1")
 		table1Control.bind(on_press=press_callback)
 		table2Control = ToggleButton(text="Table 2")
-		table2Control.bind(on_press=press_callback)press_callback
+		table2Control.bind(on_press=press_callback)
 		table3Control = ToggleButton(text="Table 3")
 		table3Control.bind(on_press=press_callback)
 		table4Control = ToggleButton(text="Table 4")
@@ -122,9 +157,7 @@ class MyApp(App):
 		beepButton = Button(text="Received")
 		beepButton.bind(on_press=press_callback)
 		wimg = Image(source='logo.png')
-		speedSlider = Slider(orientation='vertical', min=1, max=30, value=speed)
-		speedSlider.bind(on_touch_down=update_speed, on_touch_move=update_speed)
-
+	
 		# Add the UI elements to the layout:
 		layout.add_widget(wimg)
 		layout.add_widget(table1Control)
