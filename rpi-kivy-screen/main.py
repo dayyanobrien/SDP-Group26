@@ -107,8 +107,8 @@ def press_callback(obj):
 		if TABLE_NUMBER != 0:
 			table_obj.state = "normal"
 			print("Table",TABLE_NUMBER,"confirmed!")
-			TABLE_NUMBER = 0
 			pub.publish(str(TABLE_NUMBER))
+			TABLE_NUMBER = 0
 		else:
 			print("No table selected, or multiple buttons. Retry")
 
