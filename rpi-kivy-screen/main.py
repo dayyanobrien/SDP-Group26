@@ -9,14 +9,13 @@ from kivy.uix.image import Image
 from kivy.uix.slider import Slider
 from kivy.clock import Clock
 from kivy.graphics import Color, Rectangle
-
 import RPi.GPIO as GPIO
 
 import rospy
 import std_msgs
-rospy.init_node('main')
-pub = rospy.Publisher('table_state', int, queue_size = 10)
 
+rospy.init_node('main')
+pub = rospy.Publisher('table_state', int, queue_size = 10) #problem
 
 
 
@@ -45,55 +44,69 @@ GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 # This callback will be bound TO CONFIRM AND TABLE BUTTON:
 #TO DO: PUBLISH TABLE NUMBER
 
+
 def press_callback(obj):
+	global TABLE_NUMBER
+	global table_obj
 	print("Button pressed,", obj.text)
 	if obj.text == 'Received':
+		print("Received")
 		pub.publish('Recieved')
 	if obj.text == 'Table 1':
 		if obj.state == "down":
 			if TABLE_NUMBER == 0:
+				table_obj = obj
 				TABLE_NUMBER = 1
 		else:
 			TABLE_NUMBER = 0
 	if obj.text == 'Table 2':
 		if obj.state == "down":
 			if TABLE_NUMBER == 0:
+				table_obj = obj
 				TABLE_NUMBER = 2
 		else:
 			TABLE_NUMBER = 0
 	if obj.text == 'Table 3':
 		if obj.state == "down":
 			if TABLE_NUMBER == 0:
+				table_obj = obj
 				TABLE_NUMBER = 3
 		else:
 			TABLE_NUMBER = 0
 	if obj.text == 'Table 4':
 		if obj.state == "down":
 			if TABLE_NUMBER == 0:
+				table_obj = obj
 				TABLE_NUMBER = 4
 		else:
 			TABLE_NUMBER = 0
 	if obj.text == 'Table 5':
 		if obj.state == "down":
 			if TABLE_NUMBER == 0:
+				table_obj = obj
 				TABLE_NUMBER = 5
 		else:
 			TABLE_NUMBER = 0
 	if obj.text == 'Table 6':
 		if obj.state == "down":
 			if TABLE_NUMBER == 0:
+				table_obj = obj
 				TABLE_NUMBER = 6
 		else:
 			TABLE_NUMBER = 0
 	if obj.text == 'Table 7':
 		if obj.state == "down":
 			if TABLE_NUMBER == 0:
+				table_obj = obj
 				TABLE_NUMBER = 7
 		else:
 			TABLE_NUMBER = 0
 			
 	if obj.text == 'Confirm table':
 		if TABLE_NUMBER != 0:
+			table_obj.state = "normal"
+			print("Table",TABLE_NUMBER,"confirmed!")
+			TABLE_NUMBER = 0
 			pub.publish(TABLE_NUMBER)
 		else:
 			print("No table selected, or multiple buttons. Retry")
@@ -157,7 +170,6 @@ class MyApp(App):
 		beepButton = Button(text="Received")
 		beepButton.bind(on_press=press_callback)
 		wimg = Image(source='logo.png')
-	
 		# Add the UI elements to the layout:
 		layout.add_widget(wimg)
 		layout.add_widget(table1Control)
@@ -172,8 +184,11 @@ class MyApp(App):
 
 		# Start flashing the LED
 		Clock.schedule_once(flash, 1.0/speed)
-
 		return layout
 
 if __name__ == '__main__':
+	global TABLE_NUMBER
+	TABLE_NUMBER = 0 
+	global table_obj
+	table_obj = 0
 	MyApp().run()
