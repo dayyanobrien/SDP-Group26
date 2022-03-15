@@ -14,9 +14,9 @@ import rospy
 import std_msgs
 from std_msgs.msg import String
 
-#
 pub = rospy.Publisher('chatter', String, queue_size=10)
 rospy.init_node('talker', anonymous=True)
+
 
 def press_callback(obj):
 	global TABLE_NUMBER
@@ -86,14 +86,6 @@ def press_callback(obj):
 
 
 
-# Modify the Button Class to update according to GPIO input:
-class InputButton(Button):
-	def update(self, dt):
-		if GPIO.input(buttonPin) == True:
-			self.state = 'normal'
-		else:
-			self.state = 'down'			
-
 class MyApp(App):
 
 	def build(self):
@@ -138,8 +130,6 @@ class MyApp(App):
 		layout.add_widget(outputControl)
 		layout.add_widget(beepButton)
 
-		# Start flashing the LED
-		Clock.schedule_once(flash, 1.0/speed)
 		return layout
 
 if __name__ == '__main__':
