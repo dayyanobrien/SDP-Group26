@@ -13,12 +13,13 @@ import RPi.GPIO as GPIO
 
 import rospy
 import std_msgs
+from std_msgs.msg import String
 
-rospy.init_node('main')
-pub = rospy.Publisher('table_state', int, queue_size = 10) #problem
-
-
-
+#pub = rospy.Publisher('table_state', int, queue_size = 10) #problem
+#rospy.init_node('main')
+#
+pub = rospy.Publisher('chatter', String, queue_size=10)
+rospy.init_node('talker', anonymous=True)
 #for now, use a global for blink speed (better implementation TBD):
 speed = 1.0
 
@@ -107,7 +108,7 @@ def press_callback(obj):
 			table_obj.state = "normal"
 			print("Table",TABLE_NUMBER,"confirmed!")
 			TABLE_NUMBER = 0
-			pub.publish(TABLE_NUMBER)
+			pub.publish(str(TABLE_NUMBER))
 		else:
 			print("No table selected, or multiple buttons. Retry")
 
