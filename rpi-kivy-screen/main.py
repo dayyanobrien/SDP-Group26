@@ -9,42 +9,14 @@ from kivy.uix.image import Image
 from kivy.uix.slider import Slider
 from kivy.clock import Clock
 from kivy.graphics import Color, Rectangle
-import RPi.GPIO as GPIO
 
 import rospy
 import std_msgs
 from std_msgs.msg import String
 
-#pub = rospy.Publisher('table_state', int, queue_size = 10) #problem
-#rospy.init_node('main')
 #
 pub = rospy.Publisher('chatter', String, queue_size=10)
 rospy.init_node('talker', anonymous=True)
-#for now, use a global for blink speed (better implementation TBD):
-speed = 1.0
-
-# Set up GPIO:
-tablePin = 18 #PIN for read table
-orderRecievePin = 25 
-confirmPin = 27
-
-
-buttonPin = 22
-flashLedPin = 10
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(tablePin, GPIO.OUT)
-GPIO.output(tablePin, GPIO.LOW)
-GPIO.setup(confirmPin, GPIO.OUT)
-GPIO.output(confirmPin, GPIO.LOW)
-GPIO.setup(flashLedPin, GPIO.OUT)
-GPIO.output(flashLedPin, GPIO.LOW)
-GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-# Define some helper functions:
-
-# This callback will be bound TO CONFIRM AND TABLE BUTTON:
-#TO DO: PUBLISH TABLE NUMBER
-
 
 def press_callback(obj):
 	global TABLE_NUMBER
@@ -113,23 +85,6 @@ def press_callback(obj):
 			print("No table selected, or multiple buttons. Retry")
 
 
-
-
-def buzzer_off(dt):
-	GPIO.output(tablePin, GPIO.LOW)
-
-# Toggle the flashing LED according to the speed global
-# This will need better implementation
-def flash(dt):
-	global speed
-	GPIO.output(flashLedPin, not GPIO.input(flashLedPin))
-	Clock.schedule_once(flash, 1.0/speed)
-
-# This is called when the slider is updated:
-def update_speed(obj, value):
-	global speed
-	print("Updating speed to:" + str(obj.value))
-	speed = obj.value
 
 # Modify the Button Class to update according to GPIO input:
 class InputButton(Button):
