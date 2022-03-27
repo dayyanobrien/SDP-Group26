@@ -1,0 +1,81 @@
+DWAPlannerROS:
+
+# Robot Configuration Parameters
+  acc_lim_theta: 3.0
+  acc_lim_trans: 0.24007875908011603
+  acc_lim_x: 3.0
+  acc_lim_y: 0.0
+  angular_sim_granularity: 0.1
+  forward_point_distance: 0.5913983513994711
+  goal_distance_bias: 3.6553843546522615
+
+# The velocity when robot is moving in a straight line
+  max_scaling_factor: 0.2
+  max_vel_theta: 1.0
+  max_vel_trans: 0.35
+  max_vel_x: 0.35
+  max_vel_y: 0.0
+  min_vel_theta: 0.612800788139932
+  min_vel_trans: 0.0
+  min_vel_x: -0.35
+  min_vel_y: 0.0
+  occdist_scale: 0.01
+  oscillation_reset_angle: 0.2
+  oscillation_reset_dist: 0.2
+
+# Goal Tolerance Parametes
+  path_distance_bias: 12.706204736174696
+  prune_plan: false
+  restore_defaults: false
+  scaling_speed: 0.25
+  sim_granularity: 0.025
+  sim_time: 2.5
+  state: true
+  stop_time_buffer: 0.19076020221856677
+  theta_stopped_vel: 0.1
+  trans_stopped_vel: 0.1
+  twirling_scale: 0.06291466725364976
+
+# Forward Simulation Parameters
+  vth_samples: 40
+  vx_samples: 20
+  vy_samples: 1
+  xy_goal_tolerance: 0.1
+  yaw_goal_tolerance: 0.18
+
+# Trajectory Scoring Parameters
+  max_scaling_factor: 0.2
+  max_vel_theta: 1.0
+  max_vel_trans: 0.35
+  max_vel_x: 0.35
+  max_vel_y: 0.0
+  min_vel_theta: 0.612800788139932
+  min_vel_trans: 0.0
+  min_vel_x: -0.35
+  min_vel_y: 0.0
+  occdist_scale: 0.01
+  oscillation_reset_angle: 0.2
+  oscillation_reset_dist: 0.2
+  path_distance_bias: 12.706204736174696
+  prune_plan: false
+  restore_defaults: false
+  scaling_speed: 0.25
+  sim_granularity: 0.025
+  sim_time: 2.5
+  stop_time_buffer: 0.19076020221856677
+  theta_stopped_vel: 0.1
+  trans_stopped_vel: 0.1
+  twirling_scale: 0.06291466725364976
+  use_dwa: true
+  vth_samples: 40
+  vx_samples: 20
+  vy_samples: 1
+  xy_goal_tolerance: 0.1
+  yaw_goal_tolerance: 0.18
+
+# Oscillation Prevention Parameters
+  oscillation_reset_dist: 0.2
+
+# Debugging
+  publish_traj_pc : true
+  publish_cost_grid_pc: true
