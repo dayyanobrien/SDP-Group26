@@ -6,8 +6,7 @@ import rospy
 import os
 import tf
 import sys
-import rospy
-#from std_msgs import Float64
+from std_msgs.msg import String
 #from std_msgs import range
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 import actionlib
@@ -48,6 +47,8 @@ class Navigation():
 
 		if success and state == GoalStatus.SUCCEEDED:
 			# We made it!
+			# send open door signal!!!!!!!!!
+
 			result = True
 		else:
 			self.move_base.cancel_goal()
@@ -111,48 +112,9 @@ def deliverTo():
 	input("Press enter to return")
 	travelTo(home)
 
-	"""
-	rospy.init_node('nav_test', anonymous=False)
-	navigator = Navigation()
-
-	# Customize the following values so they are appropriate for your location
-	position = {'x': tableList[deliverTo][0], 'y' : tableList[deliverTo][1]}
-	quaternion = {'r1' : 0.000, 'r2' : 0.000, 'r3' : 0.000, 'r4' : 1.000}
-
-	rospy.loginfo("Go to (%s, %s) pose", position['x'], position['y'])
-	success = navigator.goto(position, quaternion)
-
-	if success:
-		rospy.loginfo("Hooray, reached the desired pose")
-	else:
-		rospy.loginfo("The base failed to reach the desired pose")
-
-	# Sleep to give the last log messages time to be sent
-	rospy.sleep(1)
-	"""
-"""
-def returnHome():
-	rospy.init_node('nav_test', anonymous=False)
-	navigator = Navigation()
-
-	# Customize the following values so they are appropriate for your location
-	position = {'x': home[0], 'y' : home[1]}
-	quaternion = {'r1' : 0.000, 'r2' : 0.000, 'r3' : 0.000, 'r4' : 1.000}
-
-	rospy.loginfo("Go to (%s, %s) pose", position['x'], position['y'])
-	success = navigator.goto(position, quaternion)
-
-	if success:
-		rospy.loginfo("Hooray, reached the desired pose")
-	else:
-		rospy.loginfo("The base failed to reach the desired pose")
-
-	# Sleep to give the last log messages time to be sent
-	rospy.sleep(1)
-"""
-
 def travelTo(location):
-	rospy.init_node('nav_test', anonymous=False)
+	#############
+	#rospy.init_node('nav_test', anonymous=False)
 	navigator = Navigation()
 	print(location)
 	# Customize the following values so they are appropriate for your location
@@ -190,26 +152,43 @@ def moveTable(tableList):
 	print("Table "+ str(tableNumber)+" has been moved")
 	return tableList
 
-def callback1(data):
-    rospy.loginfo("Callback1 heard %s",data.data)
+def tableNumber_callback(data):
+	tableNumber = data.data
+	print(tableNumber)
+	if tableNumber.isnumeric():
+		if int(tableNumber) > 0:
+			tableNumber = int(tableNumber)
+			print(tableList[tableNumber])
+			travelTo(tableList[tableNumber])
+	if tableNumber == "Recieved":
+		tableNumber = tableNumber
+		print()
+		travelTo(home)
+	rospy.loginfo("tableNumber heard %s",data.data)
+	rospy.sleep(1)
 
-def callback2(data):
-    rospy.loginfo("Callback2 heard %s",data.data) 
+#def ultrasonic_callback(data):
+#	distance = data.Float64
+#	rospy.loginfo("Callback2 heard %s",data.data) 
 
 def listener():
-    rospy.init_node('python_navi')
-    rospy.Subscriber("ultrasonic", Float64, callback1)
-    rospy.Subscriber("chatter2", String, callback2)
-    # spin() simply keeps python from exiting until this node is stopped
-    rospy.spin()
+	#change table_state to chatter since thats on GUI
+	rospy.Subscriber("chatter", String, tableNumber_callback)
+	rospy.init_node('python_navi')
+	#rospy.Subscriber("ultrasonic", Float64, ultrasonic_callback)
+	# spin() simply keeps python from exiting until this node is stopped
+	print('dasdasfxz')
+	rospy.spin()
 
 ####################################################################################################################################
 ####################################################################################################################################
 ###########################################  MAIN  ##################################################################################
 
 if __name__ == '__main__':
+ 
 	dontexit = True
 	tableList = []
+	global home
 	home = []
 
 	try:
@@ -232,6 +211,9 @@ if __name__ == '__main__':
 	homeFile.close()
 
 	while (dontexit):
+		tableNumber = 0
+		listener()
+		print('sadsafd')
 		try:
 			print()
 			print("Enter [1] DEFINEHOME to define home location")
