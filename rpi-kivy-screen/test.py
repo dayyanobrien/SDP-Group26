@@ -17,8 +17,21 @@ import std_msgs
 from std_msgs.msg import String
 
 pub = rospy.Publisher('chatter', String, queue_size=10)
+sub = rospy.Subscriber('navi_status', String, callback, queue_size = 10)
+
 rospy.init_node('talker', anonymous=True)
 
+def callback(msg):
+	if var == 'going home':
+		self.manager.current = "returning"
+	if var == 'going to table':
+		self.manager.current = "delivering
+	if var == 'Reached home':
+		self.manager.current = "kitchen"
+	if var == 'Reached table':
+		self.manager.current = "table"
+	if var == 'Stuck':
+		self.manager.current = "warn"
 		
 #Define our different screens
 class Kitchen(Screen):
@@ -75,9 +88,13 @@ class Kitchen2(Screen):
 
 			# open the popup
 			popup.open()
-	
+
+
+
 class Table(Screen):
-	pass
+	def return(self, instance):
+		self.manager.current = "returning"
+		pub.publish('Recieved')
 
 class Delivering(Screen):
 	pass
