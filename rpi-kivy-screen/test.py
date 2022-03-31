@@ -2,12 +2,21 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen 
-
+		
 #Define our different screens
-class FirstWindow(Screen):
+class Kitchen(Screen):
 	pass
 
-class SecondWindow(Screen):
+class Kitchen2(Screen):
+	pass
+
+class Delivering(Screen):
+	pass
+
+class Returning(Screen):
+	pass
+
+class Warn(Screen):
 	pass
 
 class WindowManager(ScreenManager):
