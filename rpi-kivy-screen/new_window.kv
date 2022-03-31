@@ -1,41 +1,117 @@
 WindowManager:
-	FirstWindow:
-	SecondWindow:
+	Kitchen:
+	Kitchen2:
+	Table:
+	Delivering:
+	Returning:
+	Warning:
 
 
-<FirstWindow>:
-	name: "first"
+<Kitchen>:
+	name: "kitchen"
 
-	BoxLayout:
-		orientation: "vertical"
+	GridLayout:
 		size: root.width, root.height
-
-		Label:
-			text: "First Screen"
-			font_size: 32
-
+		Image:
+			source: 'logo.png'		
 		Button:
-			text: "Next Screen"
-			font_size: 32
+			text: "Table 1"
+		Button:
+			text: "Table 2"
+		Button:
+			text: "Table 3"
+		Button:
+			text: "Table 4"
+		Button:
+			text: "Table 5"
+		Button:
+			text: "Table 6"
+		Button:
+			text: "Table 7"
+		Button:
+			text: "Confirm"
 			on_release: 
-				app.root.current = "second"
-				root.manager.transition.direction = "left"
+				app.root.current = "delivering"
+		Button:
+			text: "Next page"
+			on_release: 
+				app.root.current = "kitchen2"
+				
+<Kitchen2>:
+	name: "kitchen2"
 
-
-<SecondWindow>:
-	name: "second"
-
-	BoxLayout:
-		orientation: "vertical"
+	GridLayout:
 		size: root.width, root.height
-
-		Label:
-			text: "Second Screen"
-			font_size: 32
-
+		Image:
+			source: 'logo.png'		
 		Button:
-			text: "Go Back"
-			font_size: 32
+			text: "Table 8"
+		Button:
+			text: "Table 9"
+		Button:
+			text: "Table 10"
+		Button:
+			text: "Table 11"
+		Button:
+			text: "Table 12"
+		Button:
+			text: "Table 13"
+		Button:
+			text: "Table 14"
+		Button:
+			text: "Confirm"
 			on_release: 
-				app.root.current = "first"
-				root.manager.transition.direction = "right"
+				app.root.current = "delivering"
+		Button:
+			text: "Previous page"
+			on_release: 
+				app.root.current = "kitchen"
+				
+<Table>:
+	name: "table"
+
+	GridLayout:
+		size: root.width, root.height
+		Image:
+			source: 'logo.png'		
+		Button:
+			text: "Received Order"
+			on_release: 
+				app.root.current = "returning"
+							
+<Delivering>:
+	name: "delivering"
+
+	GridLayout:
+		size: root.width, root.height
+		Image:
+			source: 'logo.png'		
+		Button:
+			text: "Delivering to..."
+			on_release: 
+				app.root.current = "table"
+				
+			
+<Returning>:
+	name: "returning"
+
+	GridLayout:
+		size: root.width, root.height
+		Image:
+			source: 'logo.png'		
+		Button:
+			text: "Returning to kitchen"
+			on_release: 
+				app.root.current = "kitchen"				
+			
+<Warn>:
+	name: "warn"
+
+	GridLayout:
+		size: root.width, root.height
+		Image:
+			source: 'logo.png'		
+		Button:
+			text: "Stuck: Robot fixed"
+			on_release: 
+				app.root.current = "kitchen"
