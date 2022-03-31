@@ -12,8 +12,13 @@ from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 import actionlib
 from actionlib_msgs.msg import *
 from geometry_msgs.msg import Pose, Point, Quaternion
+from geometry_msgs.msg import PoseWithCovarianceStamped
+import time
+
+
 
 class Navigation():
+
 	def __init__(self):
 		self.goal_sent = False
 
@@ -22,13 +27,15 @@ class Navigation():
 
 		# Tell the action client that we want to spin a thread by default
 		self.move_base = actionlib.SimpleActionClient("move_base", MoveBaseAction)
+		self.pub = rospy.Publisher('navi_status',String, queue_size=10)
 		rospy.loginfo("Wait for the action server to come up")
 
 		# Allow up to 5 seconds for the action server to come up
 		self.move_base.wait_for_server(rospy.Duration(5))
 
-	def goto(self, pos, quat):
+		self.stopped = False
 
+	def goto(self, pos, quat):
 		# Send a goal
 		self.goal_sent = True
 		goal = MoveBaseGoal()
@@ -40,12 +47,23 @@ class Navigation():
 		# Start moving
 		self.move_base.send_goal(goal)
 		# Allow TurtleBot up to 60 seconds to complete task
-		success = self.move_base.wait_for_result(rospy.Duration(60))
+		#success = self.move_base.wait_for_result(rospy.Duration(120))
 
 		state = self.move_base.get_state()
 		result = False
 
-		if success and state == GoalStatus.SUCCEEDED:
+		timer = time.time()
+		self.stopped = False
+		while not (state == GoalStatus.SUCCEEDED) and (time.time() - timer) <= 120 and (not self.stopped):
+			# Start moving
+			self.move_base.send_goal(goal)
+			time.sleep(1)
+			state = self.move_base.get_state()
+			print(state)
+		if self.stopped:
+			self.move_base.cancel_goal()
+          #ometry_ms.SUCCEEDED:
+		if state == GoalStatus.SUCCEEDED:
 			# We made it!
 			# send open door signal!!!!!!!!!
 
@@ -56,16 +74,36 @@ class Navigation():
 		self.goal_sent = False
 		return result
 
+	# def stop(self): 
+	# 	self.stopped = True
+	# 	print('in stop')
+	# 	rospy.Subscriber("acml", PoseWithCovarianceStamped, callback)
+	# 	#rospy.init_node('python_navi')
+
 	def shutdown(self):
+		self.stopped = True
 		if self.goal_sent:
 			self.move_base.cancel_goal()
 		rospy.loginfo("Stop")
 		rospy.sleep(1)
 
+	def publish_status(self, state):
+		self.pub.publish(state)
+	
+
 ####################################################################################################################################
 ####################################################################################################################################
 ####################################################################################################################################
 ####################################################################################################################################
+
+# def callback(msg):
+# 	print('in callback')
+# 	orientation_q = msg.pose.pose.orientation
+# 	orientation_list = [orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w]
+# 	(roll, pitch, yaw) = tf.transformations.euler_from_quaternion (orientation_list)
+# 	curr_pos = msg.pose.pose
+# 	location = [curr_pos.position.x, curr_pos.position.y,yaw]
+# 	travelTo(location)
 
 def defineHome():
 	home = input("Enter x and y value of coordinate of home with a space inbetween.: ")
@@ -86,7 +124,7 @@ def addTables(tableList):
 	number = int(input("How many tables would you like to add: "))
 	for x in range(0,number):
 		newTable = input("Enter x and y value of coordinate of next table with a space inbetween.: ")
-		newTable = [float(i) for i in newTable.split(" ")]
+		newTable = [float(i) for i ihatten newTable.split(" ")]
 		tableList.append(newTable)
 		direction = input("Enter direction of turtlebot. U(up)/D(down)/L(left)/R(right): ")
 		if direction == 'U':
@@ -108,14 +146,23 @@ def deliverTo():
 	deliverTo = input("Enter what table to deliver to: ")
 	deliverTo = int(deliverTo)-1
 	
-	travelTo(tableList[deliverTo])
+	travelTo(tableList[deliverTo],'Table')
+	# opendoor
 	input("Press enter to return")
-	travelTo(home)
+	travelTo(home,'Home')
+	# opendoor
+	
 
-def travelTo(location):
+def travelTo(location, des):
 	#############
-	#rospy.init_node('nav_test', anonymous=False)
+	rospy.init_node('nav_test', anonymous=False)
 	navigator = Navigation()
+	if des == 'Home':
+		navigator.publish_status('going home')
+	else:
+		navigator.publish_status('going to table')
+	
+
 	print(location)
 	# Customize the following values so they are appropriate for your location
 	position = {'x': location[0], 'y' : location[1]}
@@ -129,8 +176,14 @@ def travelTo(location):
 	success = navigator.goto(position, quaternion)
 
 	if success:
+		if des == 'Home':
+			navigator.publish_status('Reached home')
+		else:
+			navigator.publish_status('Reached table')
 		rospy.loginfo("Hooray, reached the desired pose")
 	else:
+		navigator.publish_status('Stuck')
+
 		rospy.loginfo("The base failed to reach the desired pose")
 
 	# Sleep to give the last log messages time to be sent
@@ -159,11 +212,11 @@ def tableNumber_callback(data):
 		if int(tableNumber) > 0:
 			tableNumber = int(tableNumber)
 			print(tableList[tableNumber])
-			travelTo(tableList[tableNumber])
+			travelTo(tableList[tableNumber],'Table')
 	if tableNumber == "Recieved":
 		tableNumber = tableNumber
 		print()
-		travelTo(home)
+		travelTo(home,'Home')
 	rospy.loginfo("tableNumber heard %s",data.data)
 	rospy.sleep(1)
 
@@ -212,7 +265,7 @@ if __name__ == '__main__':
 
 	while (dontexit):
 		tableNumber = 0
-		listener()
+		#listener()
 		print('sadsafd')
 		try:
 			print()
@@ -234,7 +287,7 @@ if __name__ == '__main__':
 				deliverTo()
 
 			elif (nextCommand == "4"):
-				travelTo(home)
+				travelTo(home,'Home')
 
 			elif (nextCommand == "5"):
 				moveTable(tableList)
