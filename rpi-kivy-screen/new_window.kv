@@ -1,4 +1,7 @@
+#:import NoTransition kivy.uix.screenmanager.NoTransition
+
 WindowManager:
+    transition: NoTransition()
 	Kitchen:
 	Kitchen2:
 	Table:
@@ -11,57 +14,88 @@ WindowManager:
 	name: "kitchen"
 
 	GridLayout:
-		size: root.width, root.height
+	    size: root.width, root.height
+		cols: 5
+        rows: 2
 		Image:
 			source: 'logo.png'		
-		Button:
+		ToggleButton:
 			text: "Table 1"
-		Button:
+			on_press:
+			    root.table_pressed(self)
+		ToggleButton:
 			text: "Table 2"
-		Button:
+			on_press:
+			    root.table_pressed(self)
+		ToggleButton:
 			text: "Table 3"
-		Button:
+			on_press:
+			    root.table_pressed(self)
+		ToggleButton:
 			text: "Table 4"
-		Button:
+			on_press:
+			    root.table_pressed(self)
+		ToggleButton:
 			text: "Table 5"
-		Button:
+			on_press:
+			    root.table_pressed(self)
+		ToggleButton:
 			text: "Table 6"
-		Button:
+			on_press:
+			    root.table_pressed(self)
+		ToggleButton:
 			text: "Table 7"
+			on_press:
+			    root.table_pressed(self)
 		Button:
 			text: "Confirm"
 			on_release: 
-				app.root.current = "delivering"
+		        root.confirm(self)
 		Button:
 			text: "Next page"
-			on_release: 
+			on_release:
 				app.root.current = "kitchen2"
 				
 <Kitchen2>:
 	name: "kitchen2"
-
 	GridLayout:
 		size: root.width, root.height
+		cols: 5
+        rows: 2
 		Image:
 			source: 'logo.png'		
-		Button:
+		ToggleButton:
 			text: "Table 8"
-		Button:
+			on_press:
+			    root.table_pressed(self)
+		ToggleButton:
 			text: "Table 9"
-		Button:
+			on_press:
+			    root.table_pressed(self)
+		ToggleButton:
 			text: "Table 10"
-		Button:
+			on_press:
+			    root.table_pressed(self)
+		ToggleButton:
 			text: "Table 11"
-		Button:
+			on_press:
+			    root.table_pressed(self)
+		ToggleButton:
 			text: "Table 12"
-		Button:
+			on_press:
+			    root.table_pressed(self)
+		ToggleButton:
 			text: "Table 13"
-		Button:
+			on_press:
+			    root.table_pressed(self)
+		ToggleButton:
 			text: "Table 14"
+			on_press:
+			    root.table_pressed(self)
 		Button:
 			text: "Confirm"
-			on_release: 
-				app.root.current = "delivering"
+			on_release:
+			    root.confirm(self)
 		Button:
 			text: "Previous page"
 			on_release: 
@@ -72,6 +106,8 @@ WindowManager:
 
 	GridLayout:
 		size: root.width, root.height
+		cols: 2
+        rows: 1
 		Image:
 			source: 'logo.png'		
 		Button:
@@ -84,6 +120,8 @@ WindowManager:
 
 	GridLayout:
 		size: root.width, root.height
+		cols: 2
+        rows: 1
 		Image:
 			source: 'logo.png'		
 		Button:
@@ -97,6 +135,8 @@ WindowManager:
 
 	GridLayout:
 		size: root.width, root.height
+		cols: 2
+        rows: 1
 		Image:
 			source: 'logo.png'		
 		Button:
@@ -109,6 +149,8 @@ WindowManager:
 
 	GridLayout:
 		size: root.width, root.height
+		cols: 2
+        rows: 1
 		Image:
 			source: 'logo.png'		
 		Button:
