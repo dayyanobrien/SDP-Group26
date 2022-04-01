@@ -112,8 +112,8 @@ WindowManager:
 			source: 'logo.png'		
 		Button:
 			text: "Received Order"
-			on_release: 
-				app.root.current = "returning"
+			on_release:
+			    root.returnHome(self)
 							
 <Delivering>:
 	name: "delivering"
@@ -156,4 +156,4 @@ WindowManager:
 		Button:
 			text: "Stuck: Robot fixed"
 			on_release: 
-				app.root.current = "kitchen"
+			    app.root.current = "kitchen"
