@@ -18,9 +18,11 @@ from std_msgs.msg import String
 
 def callback(msg):
 	if msg.data == 'going home':
-		App.get_running_app().root.current = "returning"
+		print('going home')
+		#App.get_running_app().root.current = "returning"
 	if msg.data  == 'going to table':
-		App.get_running_app().root.current = "delivering"
+		print('going to table')
+		#App.get_running_app().root.current = "delivering"
 	if msg.data == 'Reached home':
 		App.get_running_app().root.current = "kitchen"
 	if msg.data == 'Reached table':
@@ -93,7 +95,7 @@ class Kitchen2(Screen):
 
 
 class Table(Screen):
-	def return(self, instance):
+	def returnHome(self, instance):
 		self.manager.current = "returning"
 		pub.publish('Recieved')
 
@@ -105,7 +107,7 @@ class Returning(Screen):
 
 class Warn(Screen):
 	pass
-
+	
 class WindowManager(ScreenManager):
 	pass
 
