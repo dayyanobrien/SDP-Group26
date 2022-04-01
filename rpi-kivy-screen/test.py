@@ -16,22 +16,23 @@ import rospy
 import std_msgs
 from std_msgs.msg import String
 
+def callback(msg):
+	if msg.data == 'going home':
+		App.get_running_app().root.current = "returning"
+	if msg.data  == 'going to table':
+		App.get_running_app().root.current = "delivering
+	if msg.data == 'Reached home':
+		App.get_running_app().root.current = "kitchen"
+	if msg.data == 'Reached table':
+		App.get_running_app().root.current = "table"
+	if msg.data == 'Stuck':
+		App.get_running_app().root.current = "warn"
+		
 pub = rospy.Publisher('chatter', String, queue_size=10)
 sub = rospy.Subscriber('navi_status', String, callback, queue_size = 10)
 
 rospy.init_node('talker', anonymous=True)
 
-def callback(msg):
-	if var == 'going home':
-		self.manager.current = "returning"
-	if var == 'going to table':
-		self.manager.current = "delivering
-	if var == 'Reached home':
-		self.manager.current = "kitchen"
-	if var == 'Reached table':
-		self.manager.current = "table"
-	if var == 'Stuck':
-		self.manager.current = "warn"
 		
 #Define our different screens
 class Kitchen(Screen):
