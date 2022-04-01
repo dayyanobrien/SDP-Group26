@@ -20,7 +20,7 @@ def callback(msg):
 	if msg.data == 'going home':
 		App.get_running_app().root.current = "returning"
 	if msg.data  == 'going to table':
-		App.get_running_app().root.current = "delivering
+		App.get_running_app().root.current = "delivering"
 	if msg.data == 'Reached home':
 		App.get_running_app().root.current = "kitchen"
 	if msg.data == 'Reached table':
