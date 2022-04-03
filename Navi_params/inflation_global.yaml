@@ -1,16 +1,16 @@
 !!python/object/new:dynamic_reconfigure.encoding.Config
 dictitems:
-  cost_scaling_factor: 7.0
+  cost_scaling_factor: 5.0
   enabled: true
   groups: !!python/object/new:dynamic_reconfigure.encoding.Config
     dictitems:
-      cost_scaling_factor: 7.0
+      cost_scaling_factor: 5.0
       enabled: true
       groups: !!python/object/new:dynamic_reconfigure.encoding.Config
         state: []
       id: 0
       inflate_unknown: false
-      inflation_radius: 2.0
+      inflation_radius: 3.0
       name: Default
       parameters: !!python/object/new:dynamic_reconfigure.encoding.Config
         state: []
@@ -19,5 +19,5 @@ dictitems:
       type: ''
     state: []
   inflate_unknown: false
-  inflation_radius: 2.0
+  inflation_radius: 3.0
 state: []
