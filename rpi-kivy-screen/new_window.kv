@@ -109,7 +109,7 @@ WindowManager:
 		cols: 2
         rows: 1
 		Image:
-			source: 'logo.png'		
+			source: 'table.png'		
 		Button:
 			text: "Received Order"
 			on_release:
@@ -123,9 +123,9 @@ WindowManager:
 		cols: 2
         rows: 1
 		Image:
-			source: 'logo.png'		
+			source: 'moving.png'		
 		Button:
-			text: "Delivering to..."
+			text: "Delivering order to table."
 			on_release: 
 				app.root.current = "table"
 				
@@ -138,9 +138,9 @@ WindowManager:
 		cols: 2
         rows: 1
 		Image:
-			source: 'logo.png'		
+			source: 'moving.png'		
 		Button:
-			text: "Returning to kitchen"
+			text: "Returning to kitchen."
 			on_release: 
 				app.root.current = "kitchen"				
 			
@@ -154,6 +154,6 @@ WindowManager:
 		Image:
 			source: 'logo.png'		
 		Button:
-			text: "Stuck: Robot fixed"
+			text: "Robot stuck. Confirm fixed."
 			on_release: 
 			    app.root.current = "kitchen"
