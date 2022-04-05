@@ -21,38 +21,47 @@ WindowManager:
 			source: 'logo.png'		
 		ToggleButton:
 			text: "Table 1"
+			font_size: 20
 			on_press:
 			    root.table_pressed(self)
 		ToggleButton:
 			text: "Table 2"
+			font_size: 20
 			on_press:
 			    root.table_pressed(self)
 		ToggleButton:
 			text: "Table 3"
+			font_size: 20
 			on_press:
 			    root.table_pressed(self)
 		ToggleButton:
 			text: "Table 4"
+			font_size: 20
 			on_press:
 			    root.table_pressed(self)
 		ToggleButton:
 			text: "Table 5"
+			font_size: 20
 			on_press:
 			    root.table_pressed(self)
 		ToggleButton:
 			text: "Table 6"
+			font_size: 20
 			on_press:
 			    root.table_pressed(self)
 		ToggleButton:
 			text: "Table 7"
+			font_size: 20
 			on_press:
 			    root.table_pressed(self)
 		Button:
 			text: "Confirm"
+			font_size: 20
 			on_release: 
 		        root.confirm(self)
 		Button:
 			text: "Next page"
+			font_size: 20
 			on_release:
 				app.root.current = "kitchen2"
 				
@@ -66,38 +75,47 @@ WindowManager:
 			source: 'logo.png'		
 		ToggleButton:
 			text: "Table 8"
+			font_size: 20
 			on_press:
 			    root.table_pressed(self)
 		ToggleButton:
 			text: "Table 9"
+			font_size: 20
 			on_press:
 			    root.table_pressed(self)
 		ToggleButton:
 			text: "Table 10"
+			font_size: 20
 			on_press:
 			    root.table_pressed(self)
 		ToggleButton:
 			text: "Table 11"
+			font_size: 20
 			on_press:
 			    root.table_pressed(self)
 		ToggleButton:
 			text: "Table 12"
+			font_size: 20
 			on_press:
 			    root.table_pressed(self)
 		ToggleButton:
 			text: "Table 13"
+			font_size: 20
 			on_press:
 			    root.table_pressed(self)
 		ToggleButton:
 			text: "Table 14"
+			font_size: 20
 			on_press:
 			    root.table_pressed(self)
 		Button:
 			text: "Confirm"
+			font_size: 20
 			on_release:
 			    root.confirm(self)
 		Button:
 			text: "Previous page"
+			font_size: 20
 			on_release: 
 				app.root.current = "kitchen"
 				
@@ -111,6 +129,7 @@ WindowManager:
 		Image:
 			source: 'table.png'		
 		Button:
+		    font_size: 30
 			text: "Received Order"
 			on_release:
 			    root.returnHome(self)
@@ -126,7 +145,9 @@ WindowManager:
 			source: 'moving.png'		
 		Button:
 			text: "Delivering order to table."
-			on_release: 
+			font_size: 30
+			on_release:
+			    root.openDoor(self)
 				app.root.current = "table"
 				
 			
@@ -140,8 +161,10 @@ WindowManager:
 		Image:
 			source: 'moving.png'		
 		Button:
+		    font_size: 30
 			text: "Returning to kitchen."
-			on_release: 
+			on_release:
+			    root.openDoor(self)
 				app.root.current = "kitchen"				
 			
 <Warn>:
@@ -154,6 +177,8 @@ WindowManager:
 		Image:
 			source: 'logo.png'		
 		Button:
+		    font_size: 30
 			text: "Robot stuck. Confirm fixed."
-			on_release: 
+			on_release:
+			    root.openDoor(self)
 			    app.root.current = "kitchen"
