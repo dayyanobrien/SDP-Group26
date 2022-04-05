@@ -7,6 +7,7 @@ import os
 import tf
 import sys
 from std_msgs.msg import String
+from std_msgs.msg import Empty
 #from std_msgs import range
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 import actionlib
@@ -14,11 +15,13 @@ from actionlib_msgs.msg import *
 from geometry_msgs.msg import Pose, Point, Quaternion
 from geometry_msgs.msg import PoseWithCovarianceStamped
 import time
+import std_srvs.srv
+from nav_msgs.msg import Odometry
 
-
+velocity = 0.0
+angular_vel = 0.0
 
 class Navigation():
-
 	def __init__(self):
 		self.goal_sent = False
 
@@ -28,6 +31,8 @@ class Navigation():
 		# Tell the action client that we want to spin a thread by default
 		self.move_base = actionlib.SimpleActionClient("move_base", MoveBaseAction)
 		self.pub = rospy.Publisher('navi_status',String, queue_size=10)
+		rospy.Subscriber("/odom", Odometry, odom_callback)
+		
 		rospy.loginfo("Wait for the action server to come up")
 
 		# Allow up to 5 seconds for the action server to come up
@@ -35,7 +40,11 @@ class Navigation():
 
 		self.stopped = False
 
+	
+
 	def goto(self, pos, quat):
+		global velocity
+		global angular_vel
 		# Send a goal
 		self.goal_sent = True
 		goal = MoveBaseGoal()
@@ -53,13 +62,27 @@ class Navigation():
 		result = False
 
 		timer = time.time()
+		timer_clear = time.time()
+		#timer_resend = time.time()
 		self.stopped = False
-		while not (state == GoalStatus.SUCCEEDED) and (time.time() - timer) <= 120 and (not self.stopped):
+		while not (state == GoalStatus.SUCCEEDED) and (time.time() - timer) <= 180 and (not self.stopped):
 			# Start moving
-			self.move_base.send_goal(goal)
+			if (time.time() - timer_clear >= 5.5) and (abs(velocity) <= 0.03) and (angular_vel <= 0.03):
+				print(velocity)
+				print('cleaning!!!')
+				clear_map = rospy.ServiceProxy('/move_base/clear_costmaps', std_srvs.srv.Empty())()
+				timer_clear = time.time()
+				print('resending!!!')
+				self.move_base.send_goal(goal)
+				timer_resend = time.time()
+				print(state)
+			# if (time.time() - timer_resend >= 4) and (abs(velocity) <= 0.01):
+			# 	print('resending!!!')
+			# 	self.move_base.send_goal(goal)
+			# 	timer_resend = time.time()
+			# 	print(state)
 			time.sleep(1)
 			state = self.move_base.get_state()
-			print(state)
 		if self.stopped:
 			self.move_base.cancel_goal()
           #ometry_ms.SUCCEEDED:
@@ -89,6 +112,7 @@ class Navigation():
 
 	def publish_status(self, state):
 		self.pub.publish(state)
+
 	
 
 ####################################################################################################################################
@@ -124,7 +148,7 @@ def addTables(tableList):
 	number = int(input("How many tables would you like to add: "))
 	for x in range(0,number):
 		newTable = input("Enter x and y value of coordinate of next table with a space inbetween.: ")
-		newTable = [float(i) for i ihatten newTable.split(" ")]
+		newTable = [float(i) for i in newTable.split(" ")]
 		tableList.append(newTable)
 		direction = input("Enter direction of turtlebot. U(up)/D(down)/L(left)/R(right): ")
 		if direction == 'U':
@@ -155,8 +179,9 @@ def deliverTo():
 
 def travelTo(location, des):
 	#############
-	rospy.init_node('nav_test', anonymous=False)
+	#rospy.init_node('nav_test', anonymous=False)
 	navigator = Navigation()
+	#rospy.Service('/move_base/clear_costmaps', "{}")
 	if des == 'Home':
 		navigator.publish_status('going home')
 	else:
@@ -212,11 +237,19 @@ def tableNumber_callback(data):
 		if int(tableNumber) > 0:
 			tableNumber = int(tableNumber)
 			print(tableList[tableNumber])
+			#CLEAR MAP HERE
+			clear_map = rospy.ServiceProxy('/move_base/clear_costmaps', std_srvs.srv.Empty())()
 			travelTo(tableList[tableNumber],'Table')
+			#CLEAR MAP HERE
+			clear_map = rospy.ServiceProxy('/move_base/clear_costmaps', std_srvs.srv.Empty())()
 	if tableNumber == "Recieved":
 		tableNumber = tableNumber
 		print()
+		#CLEAR MAP HERE
+		clear_map = rospy.ServiceProxy('/move_base/clear_costmaps', std_srvs.srv.Empty())()
 		travelTo(home,'Home')
+		#CLEAR MAP HERE
+		clear_map = rospy.ServiceProxy('/move_base/clear_costmaps', std_srvs.srv.Empty())()
 	rospy.loginfo("tableNumber heard %s",data.data)
 	rospy.sleep(1)
 
@@ -224,13 +257,22 @@ def tableNumber_callback(data):
 #	distance = data.Float64
 #	rospy.loginfo("Callback2 heard %s",data.data) 
 
+def odom_callback(msg):
+	global velocity
+	global angular_vel
+	velocity = msg.twist.twist.linear.x
+	angular_vel = msg.twist.twist.angular.x + msg.twist.twist.angular.y + msg.twist.twist.angular.z
+
+
 def listener():
 	#change table_state to chatter since thats on GUI
 	rospy.Subscriber("chatter", String, tableNumber_callback)
 	rospy.init_node('python_navi')
+	
+	#rospy.Service.call("/move_base/clear_costmaps", "{}")
 	#rospy.Subscriber("ultrasonic", Float64, ultrasonic_callback)
 	# spin() simply keeps python from exiting until this node is stopped
-	print('dasdasfxz')
+	#print('dasdasfxz')
 	rospy.spin()
 
 ####################################################################################################################################
@@ -265,7 +307,7 @@ if __name__ == '__main__':
 
 	while (dontexit):
 		tableNumber = 0
-		#listener()
+		listener()
 		print('sadsafd')
 		try:
 			print()
